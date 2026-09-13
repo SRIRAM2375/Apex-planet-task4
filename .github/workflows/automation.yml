@@ -1,0 +1,39 @@
+name: Automated Sales Pipeline
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: "30 3 * * 1"
+
+jobs:
+  run-pipeline:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run sales pipeline
+        run: |
+          python automation/pipeline.py
+
+      - name: Upload pipeline results
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-pipeline-results
+          path: |
+            outputs/processed_data.csv
+            outputs/sales_kpis.xlsx
+            outputs/pipeline_log.txt
